@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Geoprocessing - viewshed analysis | Sample | ArcGIS Maps SDK for JavaScript 4.30</title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      #paneDiv {
+        position: fixed;
+        bottom: 10px;
+        left: 18px;
+        padding: 12px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        width: 200px;
+      }
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.30/"></script>
+
+    <script>
+       require([
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/GraphicsLayer",
+        "esri/Graphic",
+        "esri/geometry/Point",
+        "esri/rest/geoprocessor",
+        "esri/rest/support/LinearUnit",
+        "esri/rest/support/FeatureSet",
+        "esri/WebScene",
+        "esri/config",
+        "esri/widgets/Legend",
+        "esri/widgets/LayerList",
+        "esri/widgets/Expand",
+        "esri/widgets/Locate", 
+        "esri/widgets/Search",
+        "esri/widgets/Editor",
+        "esri/layers/FeatureLayer"
+      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer) => {
+        const gpUrl =
+          "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed";
+        
+           
+           
+        esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFptmWVDGj2oBzLU_FEb7MYX0qH5GOw1aZJz27AFDFnsXt70wtDYxWgOmMkRoNzk_wQlq_8W9kipWE77Urnp28v1QS_SBGxk4DBvYbVAhhl1mPyzo2qtaMWDuGz7xbDw3R8Nx-49gW68o2gcx-94yjBd_Uzar55n5a8pjyY1BzIL549ZxbnOCV96wKKVLNOMpxLeZ_OA4c6IioUIGtJIOzZMn_Lo9jbsnygsPo6IvmQ10c.AT1_8pierIL4";
+
+        
+        const webscene = new WebScene({
+            portalItem: {
+                id: "8ac1abdfd6e04a93bb9406ff88cb4671"
+            }
+        });   
+        const graphicsLayer = new GraphicsLayer();
+        webscene.add(graphicsLayer);
+    
+        
+        const view = new SceneView({
+            container: "viewDiv",
+            map: webscene
+        });
+           
+
+        const markerSymbol = {
+          type: "simple-marker",
+          color: [0, 0, 0],
+          outline: {
+            color: [255, 255, 255],
+            width: 2
+          }
+        };
+
+        const fillSymbol = {
+          type: "simple-fill",
+          color: [0, 0, 0], 
+          outline: {
+            color: [255, 255, 255],
+            width: 1
+          }
+        };
+
+        const options = {
+          outSpatialReference: {
+            wkid: 102100
+          }
+        };
+
+        view.on("click", computeViewshed);
+
+        function computeViewshed(event) {
+          graphicsLayer.removeAll();
+
+          const point = new Point({
+            longitude: event.mapPoint.longitude,
+            latitude: event.mapPoint.latitude
+          });
+
+          const inputGraphic = new Graphic({
+            geometry: point,
+            symbol: markerSymbol
+          });
+
+          graphicsLayer.add(inputGraphic);
+
+          const inputGraphicContainer = [];
+          inputGraphicContainer.push(inputGraphic);
+          const featureSet = new FeatureSet();
+          featureSet.features = inputGraphicContainer;
+
+          const vsDistance = new LinearUnit();
+          vsDistance.distance = 5;
+          vsDistance.units = "miles";
+
+          const params = {
+            Input_Observation_Point: featureSet,
+            Viewshed_Distance: vsDistance
+          };
+
+          geoprocessor.execute(gpUrl, params, options).then(drawResultData);
+        }
+
+        function drawResultData(result) {
+          const resultFeatures = result.results[0].value.features;
+
+          // Assign each resulting graphic a symbol
+          const viewshedGraphics = resultFeatures.map((feature) => {
+            feature.symbol = fillSymbol;
+            feature.title = "Viewshed";
+            return feature;
+          });
+
+          // Add the resulting graphics to the graphics layer
+          graphicsLayer.addMany(viewshedGraphics);
+
+          /********************************************************************
+           * Animate to the result. This is a temporary workaround
+           * for animating to an array of graphics in a SceneView. In a future
+           * release, you will be able to replicate this behavior by passing
+           * the graphics directly to the goTo function, like the following:
+           *
+           * view.goTo(viewshedGraphics);
+           ********************************************************************/
+          view.goTo({
+            target: viewshedGraphics,
+            tilt: 0
+          })
+          .catch((error) => {
+            if (error.name != "AbortError") {
+              console.error(error);
+            }
+          });
+        }
+    const legend = new Legend({
+      view: view,
+        layerInfos: [{
+          layer: webscene,
+        }]
+    });
+           
+         
+     //add expand for legend 
+      const lgExpand = new Expand({
+          view: view,
+          content: legend,
+          expandIcon: "legend",
+        });
+
+        // close the expand whenever a basemap is selected
+        legend.watch("activeLegend", () => {
+          const mobileSize2 = view.heightBreakpoint === "xsmall" || view.widthBreakpoint === "xsmall";
+
+          if (mobileSize2) {
+            lgExpand.collapse();
+          }
+        });
+         //adds legend to map
+        view.ui.add(lgExpand, "bottom-right");
+         
+    const layerList = new LayerList({
+      view: view,
+      dragEnabled: true
+    });
+
+//adds expand feature to layer list
+const listexpand = new Expand({
+  view: view,
+  content: layerList,
+  icon: "map-contents"
+});
+
+// add layer list with expand feature
+view.ui.add(listexpand, "bottom-right")
+         
+      
+
+// Reorder the viewshed layer to the top
+layerList.when(() => {
+  const layerListViewModel = layerList.viewModel;
+  const viewshedListItem = layerListViewModel.operationalItems.find(item => item.title === viewshedLayer.title);
+  if (viewshedListItem) {
+    layerListViewModel.reorderItems([viewshedListItem], 0);
+  }
+});  
+         
+        
+         
+//add in locate user location function
+const locateBtn = new Locate({
+          view: view
+        });
+
+        // Add the locate widget to the top left corner of the view
+        view.ui.add(locateBtn, {
+          position: "top-left"
+        });    
+
+// add in search widget        
+const searchWidget = new Search({
+  view: view
+});
+// Adds the search widget below other elements in
+// the top left corner of the view
+view.ui.add(searchWidget, {
+  position: "bottom-right",
+  index: 2
+});
+         
+      
+// Begin Editor constructor
+const editor = new Editor({
+ view: view,
+ }); // End Editor constructor
+
+//expands editor widget
+const editExpand = new Expand({
+  view: view,
+  content: editor,
+  expandIcon: "add-in-edit"
+});
+
+editor.watch("activeEditor", () => {
+  const mobileSize3 = view.heightBreakpoint === "xsmall" || view.widthBreakpoint === "xsmall";
+
+  if (mobileSize3) {
+    editExpand.collapse();
+  }
+});
+
+
+//add editor widget to map
+view.ui.add(editExpand, {
+  position:"top-right",
+});
+
+// adds feature service for project idea service
+const projectservice = new FeatureLayer({
+  // URL to the service
+  url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer"
+})         
+
+webscene.add(projectservice);
+ 
+         
+});
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+    <div id="paneDiv" class="esri-widget">Click on map to execute ViewShed geoprocessor</div>
+  </body>
+</html>

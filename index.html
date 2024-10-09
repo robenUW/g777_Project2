@@ -68,9 +68,15 @@
         const view = new SceneView({
             container: "viewDiv",
             map: webscene,
-            camera:{
-              tilt: 75}
-        });
+           camera: {
+             position: {
+               x: -73.9799, //Longitude
+               y: 44.2795, //Latitude
+               z: 2000 //Meters
+              },
+             tilt: 75
+             }
+      });
            
 
         const markerSymbol = {

@@ -1,0 +1,48 @@
+/*Styling related to sidepanel plugin*/
+.header h1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .header a {
+    font-size: 16px;
+    color: #969fa1;
+    text-decoration: none;
+    margin-left: 24px;
+  }
+  
+  .header a:hover {
+    color: #135f79;
+    text-decoration: underline;
+  }
+  
+  .header a span {
+    margin-left: 10px;
+  }
+  
+  .header a svg {
+    vertical-align: middle;
+  }
+  
+  .sidepanel-content {
+    font-size: 1rem;
+  }
+  
+  .sidepanel-content h4 {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  
+  .sidepanel-content a {
+    text-decoration: none;
+    font-size: 1rem;
+    color: #007399;
+    transition: color 0.3s ease-in;
+  }
+  
+  .sidepanel-content a:hover {
+    color: #135f79;
+    text-decoration: underline;
+  }
+  

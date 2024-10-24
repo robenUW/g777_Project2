@@ -77,7 +77,8 @@
              tilt: 75
              }
       });
-           
+
+    
 
         const markerSymbol = {
           type: "simple-marker",
@@ -245,18 +246,19 @@ view.ui.add(searchWidget, {
                  
 const pictures = new FeatureLayer({
     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer"
-          
+    apiKey:"AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFppovXJnHQp11MLnhv-ql6qijZtzMlfL5EiKzDRD6-P3NxYBVbTWQiFEfZUpK5reXzG7zCiACSoFHXSTSaqtB1IRIFb1sCULxn2EJogxBKSxWy07jn19tbdCIfCa6-nb2feSHQbzH_FVBvMya03O3gr-Ixjm_bGILdvv0oqScsHpyaqmGL5ncyAmG_hYBfrd-c1645z1OZN73UG4iyZ20V4dfqfkL2Ku_m0RahTY6rD5A.AT1_8pierIL4"   
+         
   });
 
-webscene.add(water);
+
+webscene.add(pictures);
 
 const water = new FeatureLayer({
     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Adirondack_Water/FeatureServer"
   });
-
          
 webscene.add(water);
-     
+    
 // Begin Editor constructor
 const editor = new Editor({
  view: view,

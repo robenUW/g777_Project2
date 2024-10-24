@@ -245,6 +245,8 @@ view.ui.add(searchWidget, {
 // Begin Editor constructor
 const editor = new Editor({
  view: view,
+ allowedWorkflows: ["create", "update"],
+ layerInfos: [{ layer: pictures, enabled: true, addAttachments: true  // Enables attachment uploads }]
  }); // End Editor constructor
 
 //expands editor widget
@@ -268,7 +270,7 @@ view.ui.add(editExpand, {
   position:"top-right",
 });
 
-
+         
 const pictures = new FeatureLayer({
     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer"
   });

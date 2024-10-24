@@ -47,9 +47,10 @@
         "esri/widgets/Search",
         "esri/widgets/Editor",
         "esri/layers/FeatureLayer",
-        "esri/widgets/Attachments"
+        "esri/widgets/Attachments",
+         "esri/widgets/LayerList/LayerListViewModel"
          
-      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, Attachments) => {
+      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, Attachments,LayerListVM) => {
         const gpUrl =
           "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed";
         
@@ -63,6 +64,7 @@
         });   
         const graphicsLayer = new GraphicsLayer();
         webscene.add(graphicsLayer);
+        graphicsLayer.title = "Viewshed";
     
         
         const view = new SceneView({
@@ -91,6 +93,7 @@
 
         const fillSymbol = {
           type: "simple-fill",
+          name: "Viewshed",
           color: [0, 0, 0], 
           outline: {
             color: [255, 255, 255],
@@ -144,7 +147,6 @@
           // Assign each resulting graphic a symbol
           const viewshedGraphics = resultFeatures.map((feature) => {
             feature.symbol = fillSymbol;
-            feature.title = "Viewshed";
             return feature;
           });
 
@@ -195,33 +197,26 @@
          //adds legend to map
         view.ui.add(lgExpand, "bottom-right");
          
-    const layerList = new LayerList({
-      view: view,
-      dragEnabled: true
-    });
+const layerList = new LayerList({
+  view: view,
+  dragEnabled: true
 
+    });  
+             
 //adds expand feature to layer list
 const listexpand = new Expand({
   view: view,
   content: layerList,
   icon: "map-contents"
 });
+         
+
 
 // add layer list with expand feature
 view.ui.add(listexpand, "bottom-right")
          
       
-
-// Reorder the viewshed layer to the top
-layerList.when(() => {
-  const layerListViewModel = layerList.viewModel;
-  const viewshedListItem = layerListViewModel.operationalItems.find(item => item.title === viewshedLayer.title);
-  if (viewshedListItem) {
-    layerListViewModel.reorderItems([viewshedListItem], 0);
-  }
-});  
-         
-        
+      
          
 //add in locate user location function
 const locateBtn = new Locate({
@@ -249,11 +244,8 @@ const pictures = new FeatureLayer({
   });
 
 
-const water = new FeatureLayer({
-    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Adirondack_Water/FeatureServer"
-  });
          
-webscene.addMany([pictures, water]);
+webscene.addMany([pictures]);
     
 // Begin Editor constructor
 const editor = new Editor({

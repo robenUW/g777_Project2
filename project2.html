@@ -248,13 +248,14 @@ const pictures = new FeatureLayer({
           
   });
 
+webscene.add(water);
 
 const water = new FeatureLayer({
     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Adirondack_Water/FeatureServer"
   });
 
          
-webscene.addMany(pictures,water);
+webscene.add(water);
      
 // Begin Editor constructor
 const editor = new Editor({

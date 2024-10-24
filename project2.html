@@ -65,7 +65,8 @@
         
         const view = new SceneView({
             container: "viewDiv",
-            map: webscene,
+            map: webscene
+            popupEnabled: false,
            camera: {
              position: {
                x: -73.9799, //Longitude
@@ -246,7 +247,7 @@ view.ui.add(searchWidget, {
 const editor = new Editor({
  view: view,
  allowedWorkflows: ["create", "update"],
- layerInfos: [{ layer: pictures, enabled: true, addAttachments: true  // Enables attachment uploads }]
+ layerInfos: [{ layer: pictures, enabled: true, addAttachments: true }] // Enables attachment uploads
  }); // End Editor constructor
 
 //expands editor widget

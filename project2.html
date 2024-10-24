@@ -240,7 +240,13 @@ view.ui.add(searchWidget, {
   position: "bottom-right",
   index: 2
 });
-         
+                 
+const pictures = new FeatureLayer({
+    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer"
+  });
+
+webscene.add(pictures);
+
       
 // Begin Editor constructor
 const editor = new Editor({
@@ -269,13 +275,6 @@ editor.watch("activeEditor", () => {
 view.ui.add(editExpand, {
   position:"top-right",
 });
-
-         
-const pictures = new FeatureLayer({
-    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer"
-  });
-
-webscene.add(pictures);
  
          
 });

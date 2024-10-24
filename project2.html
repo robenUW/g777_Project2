@@ -55,7 +55,7 @@
         
            
            
-        esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFppovXJnHQp11MLnhv-ql6qijZtzMlfL5EiKzDRD6-P3NxYBVbTWQiFEfZUpK5reXzG7zCiACSoFHXSTSaqtB1IRIFb1sCULxn2EJogxBKSxWy07jn19tbdCIfCa6-nb2feSHQbzH_FVBvMya03O3gr-Ixjm_bGILdvv0oqScsHpyaqmGL5ncyAmG_hYBfrd-c1645z1OZN73UG4iyZ20V4dfqfkL2Ku_m0RahTY6rD5A.AT1_8pierIL4"   
+        esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFp3SQ3vXZf-GuNkNjhtbL_H0mM7lsbulSdtGzZ5Lg2SVjUmqBBL5IoTx2utrNF9wOhMNH5KSMyDfU-zgXEsaEy4pNU4CPRdLHnVLzonSecAyL1hBL2W_JVCwGokO8xwHB7Zm9Z35OAjZg6Afx5cveCZs59rxzo8gJJ-VEFTWDPksVWuEf3245WcX4j8U5zhj1rC4AjiJFzMOFUqnD0f484-h_nt_r_CLYuR9BQbt-Go20.AT1_8pierIL4"   
         const webscene = new WebScene({
             portalItem: {
                 id: "8ac1abdfd6e04a93bb9406ff88cb4671"
@@ -245,19 +245,15 @@ view.ui.add(searchWidget, {
 });
                  
 const pictures = new FeatureLayer({
-    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer"
-    apiKey:"AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFppovXJnHQp11MLnhv-ql6qijZtzMlfL5EiKzDRD6-P3NxYBVbTWQiFEfZUpK5reXzG7zCiACSoFHXSTSaqtB1IRIFb1sCULxn2EJogxBKSxWy07jn19tbdCIfCa6-nb2feSHQbzH_FVBvMya03O3gr-Ixjm_bGILdvv0oqScsHpyaqmGL5ncyAmG_hYBfrd-c1645z1OZN73UG4iyZ20V4dfqfkL2Ku_m0RahTY6rD5A.AT1_8pierIL4"   
-         
+    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer" 
   });
 
-
-webscene.add(pictures);
 
 const water = new FeatureLayer({
     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Adirondack_Water/FeatureServer"
   });
          
-webscene.add(water);
+webscene.addMany([pictures, water]);
     
 // Begin Editor constructor
 const editor = new Editor({

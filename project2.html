@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>Geoprocessing - viewshed analysis | Sample | ArcGIS Maps SDK for JavaScript 4.30</title>
+    <title> Finding a Pictureqsque Location - The Adirondack Park</title>
     <style>
       html,
       body,
@@ -46,8 +46,10 @@
         "esri/widgets/Locate", 
         "esri/widgets/Search",
         "esri/widgets/Editor",
-        "esri/layers/FeatureLayer"
-      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer) => {
+        "esri/layers/FeatureLayer",
+        "esri/widgets/Attachments"
+         
+      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, Attachments) => {
         const gpUrl =
           "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed";
         

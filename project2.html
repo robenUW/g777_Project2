@@ -56,7 +56,7 @@
         
            
            
-        esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFpAoiGq6NbGMsSY8kg4Q5pGjhJmdpdN-IFvIRa0KrV0M7iM31MuVD2HJymZ8u-dvQTlX6ndwnhIL6SAXaTT-PcMES3byL0vZ-p7dCx6f6AyxVqskQXTVQU9RBgMTHphM8yztyoCzs6gFDJC4ya9Yl-0mBcnuOsdHiXLgTNt9LPy7bmCP3F9WDbbSJoXiqnfqATjBms0ybU50ys9D9CqBZArtCDZhn7ErZgt96C8mVr82k.AT1_8pierIL4"   
+        esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFpK3FydkiYn30kI1t--umoFiC_Z51v9q5KDL4ETbNoK_Y07EXdvPQcYhknSJSmzWEoDlmQiBgNCpR8syKw7d0DaLlis406wi33x0lxsde_yrSbXKhk8hwOnQ6CF5oxlifktnhTP7ihSd4bCK1IJ3xeEKyn1a2PfSuM2DfVeyUj7F3wIppZY8mTS99s63B1KHWanX5Q6NU-OIUfYxJ-1WNql6Oas7VM11IqBOktjBw0Fl4.AT1_8pierIL4"   
         const webscene = new WebScene({
             portalItem: {
                 id: "8ac1abdfd6e04a93bb9406ff88cb4671"
@@ -202,7 +202,7 @@ const layerList = new LayerList({
   dragEnabled: true
 
     });  
-             
+console.log(layerList)
 //adds expand feature to layer list
 const listexpand = new Expand({
   view: view,
@@ -243,9 +243,12 @@ const pictures = new FeatureLayer({
     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer" 
   });
 
+const trails = new FeatureLayer({
+    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Adirondack_Hiking_Trails/FeatureServer"
+  });
 
          
-webscene.addMany([pictures]);
+webscene.addMany([pictures, trails]);
     
 // Begin Editor constructor
 const editor = new Editor({

@@ -55,7 +55,7 @@
         
            
            
-        esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFpDx7oFGv83UuTNrtNAD6kvAMUpljNsaKr2rX8Pcz2qBoSrTOyRUvzDrw1QuzjgClIb1V9OPdlCI3uIZ4RpPd3Tq1iuX5A639o7QuMMdXsGY_kE7kRxFAgp5KZjjnaLlNSCximGg5rAOU2XlWEUfEo-iwxJtzfx1va5anMY1xkZWNt7W8wI5QuFHgmdp3cijsf96ZHUYrAgjKPboz8BcVvsIjwmwvZrelYTHp8WnbglmU.AT1_8pierIL4"   
+        esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFpywpIfdlqcSn-l2Mva3lDfE6Z8xGlfI0AXQPosTYMk2igLnlJ0vggKli6gFw_msf4a4RFuCW93OrM0hwjugxwJ_JDFhpCWHQSHVz71IG6MuaB796yWSEMCmdGcDPcmj0RlvSazzbRdTRIPs_Y7vhYQ8hhq-kM0_DjJJiaHcarbq9JaWUoWoLSii4vvEmAyBAyZXsDIK2vJkpbqwgIa8REmujYGKTxkyld3fOuNnwG7B4.AT1_8pierIL4"   
         const webscene = new WebScene({
             portalItem: {
                 id: "8ac1abdfd6e04a93bb9406ff88cb4671"
@@ -245,11 +245,17 @@ view.ui.add(searchWidget, {
                  
 const pictures = new FeatureLayer({
     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer"
+          
   });
 
-webscene.add(pictures);
 
-      
+const water = new FeatureLayer({
+    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Adirondack_Water/FeatureServer"
+  });
+
+         
+webscene.addMany(pictures,water);
+     
 // Begin Editor constructor
 const editor = new Editor({
  view: view,

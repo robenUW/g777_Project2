@@ -47,162 +47,179 @@
         "esri/widgets/Search",
         "esri/widgets/Editor",
         "esri/layers/FeatureLayer",
-        "esri/widgets/Attachments",
-         "esri/widgets/LayerList/LayerListViewModel"
+        "esri/layers/TileLayer"
          
-      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, Attachments,LayerListVM) => {
+      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, TileLayer) => {
         const gpUrl =
           "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed";
         
            
            
-        esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFpK3FydkiYn30kI1t--umoFiC_Z51v9q5KDL4ETbNoK_Y07EXdvPQcYhknSJSmzWEoDlmQiBgNCpR8syKw7d0DaLlis406wi33x0lxsde_yrSbXKhk8hwOnQ6CF5oxlifktnhTP7ihSd4bCK1IJ3xeEKyn1a2PfSuM2DfVeyUj7F3wIppZY8mTS99s63B1KHWanX5Q6NU-OIUfYxJ-1WNql6Oas7VM11IqBOktjBw0Fl4.AT1_8pierIL4"   
-        const webscene = new WebScene({
-            portalItem: {
-                id: "8ac1abdfd6e04a93bb9406ff88cb4671"
-            }
-        });   
-        const graphicsLayer = new GraphicsLayer();
-        webscene.add(graphicsLayer);
-        graphicsLayer.title = "Viewshed";
-    
+esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFpK3FydkiYn30kI1t--umoFiC_Z51v9q5KDL4ETbNoK_Y07EXdvPQcYhknSJSmzWEoDlmQiBgNCpR8syKw7d0DaLlis406wi33x0lxsde_yrSbXKhk8hwOnQ6CF5oxlifktnhTP7ihSd4bCK1IJ3xeEKyn1a2PfSuM2DfVeyUj7F3wIppZY8mTS99s63B1KHWanX5Q6NU-OIUfYxJ-1WNql6Oas7VM11IqBOktjBw0Fl4.AT1_8pierIL4"   
+const webscene = new WebScene({
+    portalItem: {
+        id: "8ac1abdfd6e04a93bb9406ff88cb4671"
+    }
+});   
+
+
+           
+const pictures = new FeatureLayer({
+    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer"
+});
+const trails = new FeatureLayer({
+    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Adirondack_Hiking_Trails/FeatureServer"
+});
+
+const stateland = new FeatureLayer({
+    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Map_3D2_WFL1/FeatureServer/0",
+    title: "Public Land"
+});
+         
+const privateland = new FeatureLayer({
+    url:"https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Map_3D2_WFL1/FeatureServer/1",
+    title: "Private Land"
+});
+
+const hillshade = new TileLayer({
+    url: "https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer",
+    title: "Hillshade"
+});
+
+           
+webscene.addMany([hillshade,privateland,stateland,trails,pictures]);
+
         
-        const view = new SceneView({
-            container: "viewDiv",
-            map: webscene,
-           camera: {
-             position: {
-               x: -73.9799, //Longitude
-               y: 44.2795, //Latitude
-               z: 2000 //Meters
-              },
-             tilt: 75
-             }
-      });
+           
+const graphicsLayer = new GraphicsLayer();
+    webscene.add(graphicsLayer);
+    graphicsLayer.title = "Viewshed";
 
-    
+    const markerSymbol = {
+      type: "simple-marker",
+      color: [0, 0, 0],
+      outline: {
+        color: [255, 255, 255],
+        width: 2
+      }
+    };
+           
+const view = new SceneView({
+    container: "viewDiv",
+    map: webscene,
+   camera: {
+     position: {
+       x: -73.9799, //Longitude
+       y: 44.2795, //Latitude
+       z: 2000 //Meters
+      },
+     tilt: 75
+     }
 
-        const markerSymbol = {
-          type: "simple-marker",
-          color: [0, 0, 0],
-          outline: {
-            color: [255, 255, 255],
-            width: 2
-          }
-        };
+}); 
 
-        const fillSymbol = {
-          type: "simple-fill",
-          name: "Viewshed",
-          color: [0, 0, 0], 
-          outline: {
-            color: [255, 255, 255],
-            width: 1
-          }
-        };
+const fillSymbol = {
+  type: "simple-fill",
+  color: [0, 0, 0], 
+  outline: {
+    color: [255, 255, 255],
+    width: 1
+  }
+};
 
-        const options = {
-          outSpatialReference: {
-            wkid: 102100
-          }
-        };
+const options = {
+  outSpatialReference: {
+    wkid: 102100
+  }
+};
 
-        view.on("click", computeViewshed);
+view.on("click", computeViewshed);
 
-        function computeViewshed(event) {
-          graphicsLayer.removeAll();
+function computeViewshed(event) {
+    graphicsLayer.removeAll();
 
-          const point = new Point({
-            longitude: event.mapPoint.longitude,
-            latitude: event.mapPoint.latitude
-          });
+const point = new Point({
+    longitude: event.mapPoint.longitude,
+    latitude: event.mapPoint.latitude
+});
 
-          const inputGraphic = new Graphic({
-            geometry: point,
-            symbol: markerSymbol
-          });
+const inputGraphic = new Graphic({
+    geometry: point,
+    symbol: markerSymbol
+});
 
-          graphicsLayer.add(inputGraphic);
+graphicsLayer.add(inputGraphic);
 
-          const inputGraphicContainer = [];
-          inputGraphicContainer.push(inputGraphic);
-          const featureSet = new FeatureSet();
-          featureSet.features = inputGraphicContainer;
+const inputGraphicContainer = [];
+inputGraphicContainer.push(inputGraphic);
+const featureSet = new FeatureSet();
+featureSet.features = inputGraphicContainer;
+const vsDistance = new LinearUnit();
+vsDistance.distance = 5;
+vsDistance.units = "miles";
 
-          const vsDistance = new LinearUnit();
-          vsDistance.distance = 5;
-          vsDistance.units = "miles";
+const params = {
+    Input_Observation_Point: featureSet,
+    Viewshed_Distance: vsDistance
+};
 
-          const params = {
-            Input_Observation_Point: featureSet,
-            Viewshed_Distance: vsDistance
-          };
+geoprocessor.execute(gpUrl, params, options).then(drawResultData);
+}
 
-          geoprocessor.execute(gpUrl, params, options).then(drawResultData);
-        }
+function drawResultData(result) {
+  const resultFeatures = result.results[0].value.features;
 
-        function drawResultData(result) {
-          const resultFeatures = result.results[0].value.features;
+  // Assign each resulting graphic a symbol
+  const viewshedGraphics = resultFeatures.map((feature) => {
+    feature.symbol = fillSymbol;
+    return feature;
+  });
 
-          // Assign each resulting graphic a symbol
-          const viewshedGraphics = resultFeatures.map((feature) => {
-            feature.symbol = fillSymbol;
-            return feature;
-          });
-
-          // Add the resulting graphics to the graphics layer
-          graphicsLayer.addMany(viewshedGraphics);
-
-          /********************************************************************
-           * Animate to the result. This is a temporary workaround
-           * for animating to an array of graphics in a SceneView. In a future
-           * release, you will be able to replicate this behavior by passing
-           * the graphics directly to the goTo function, like the following:
-           *
-           * view.goTo(viewshedGraphics);
-           ********************************************************************/
-          view.goTo({
-            target: viewshedGraphics,
-            tilt: 0
-          })
-          .catch((error) => {
-            if (error.name != "AbortError") {
-              console.error(error);
-            }
-          });
-        }
-    const legend = new Legend({
-      view: view,
-        layerInfos: [{
-          layer: webscene,
-        }]
-    });
+  // Add the resulting graphics to the graphics layer
+  graphicsLayer.addMany(viewshedGraphics);
+  view.goTo({
+    target: viewshedGraphics,
+    tilt: 0
+  })
+  .catch((error) => {
+    if (error.name != "AbortError") {
+      console.error(error);
+    }
+  });
+}
+           
+const legend = new Legend({
+  view: view,
+    layerInfos: [{
+      layer: webscene,
+    }]
+});
            
          
-     //add expand for legend 
-      const lgExpand = new Expand({
-          view: view,
-          content: legend,
-          expandIcon: "legend",
-        });
+//add expand for legend 
+const lgExpand = new Expand({
+  view: view,
+  content: legend,
+  expandIcon: "legend",
+});
 
-        // close the expand whenever a basemap is selected
-        legend.watch("activeLegend", () => {
-          const mobileSize2 = view.heightBreakpoint === "xsmall" || view.widthBreakpoint === "xsmall";
+// close the expand whenever a basemap is selected
+legend.watch("activeLegend", () => {
+  const mobileSize2 = view.heightBreakpoint === "xsmall" || view.widthBreakpoint === "xsmall";
 
-          if (mobileSize2) {
-            lgExpand.collapse();
-          }
-        });
-         //adds legend to map
-        view.ui.add(lgExpand, "bottom-right");
+  if (mobileSize2) {
+    lgExpand.collapse();
+  }
+});
+ //adds legend to map
+view.ui.add(lgExpand, "bottom-right");
          
 const layerList = new LayerList({
   view: view,
   dragEnabled: true
-
-    });  
-console.log(layerList)
+});
+    
+    
 //adds expand feature to layer list
 const listexpand = new Expand({
   view: view,
@@ -211,22 +228,19 @@ const listexpand = new Expand({
 });
          
 
-
 // add layer list with expand feature
-view.ui.add(listexpand, "bottom-right")
-         
-      
+view.ui.add(listexpand, "bottom-right")  
       
          
 //add in locate user location function
 const locateBtn = new Locate({
-          view: view
-        });
+  view: view
+});
 
-        // Add the locate widget to the top left corner of the view
-        view.ui.add(locateBtn, {
-          position: "top-left"
-        });    
+// Add the locate widget to the top left corner of the view
+view.ui.add(locateBtn, {
+  position: "top-left"
+});    
 
 // add in search widget        
 const searchWidget = new Search({
@@ -239,23 +253,12 @@ view.ui.add(searchWidget, {
   index: 2
 });
                  
-const pictures = new FeatureLayer({
-    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer" 
-  });
 
-const trails = new FeatureLayer({
-    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Adirondack_Hiking_Trails/FeatureServer"
-  });
-
-         
-webscene.addMany([pictures, trails]);
     
 // Begin Editor constructor
 const editor = new Editor({
  view: view,
- allowedWorkflows: ["create", "update"],
- layerInfos: [{ layer: pictures, enabled: true, addAttachments: true }] // Enables attachment uploads
- }); // End Editor constructor
+  }); // End Editor constructor
 
 //expands editor widget
 const editExpand = new Expand({
@@ -277,8 +280,8 @@ editor.watch("activeEditor", () => {
 view.ui.add(editExpand, {
   position:"top-right",
 });
- 
-         
+
+           
 });
     </script>
   </head>

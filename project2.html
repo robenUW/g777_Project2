@@ -47,9 +47,10 @@
         "esri/widgets/Search",
         "esri/widgets/Editor",
         "esri/layers/FeatureLayer",
-        "esri/layers/TileLayer"
+        "esri/layers/TileLayer",
+        "esri/widgets/Home"
          
-      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, TileLayer) => {
+      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, TileLayer, Home) => {
         const gpUrl =
           "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed";
         
@@ -281,6 +282,15 @@ view.ui.add(editExpand, {
   position:"bottom-right",
 });
 
+//add home eidget
+let homeWidget = new Home({
+  view: view
+});
+
+// adds the home widget to the top left corner of the MapView
+view.ui.add(homeWidget, "top-left");         
+         
+         
            
 });
     </script>

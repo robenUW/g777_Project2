@@ -48,9 +48,11 @@
         "esri/widgets/Editor",
         "esri/layers/FeatureLayer",
         "esri/layers/TileLayer",
-        "esri/widgets/Home"
+        "esri/widgets/Home",
+        "esri/widgets/Popup",
+         "esri/PopupTemplate"
          
-      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, TileLayer, Home) => {
+      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, TileLayer, Home, Popup, PopupTemplate) => {
         const gpUrl =
           "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed";
         
@@ -62,6 +64,37 @@ const webscene = new WebScene({
         id: "8ac1abdfd6e04a93bb9406ff88cb4671"
     }
 });   
+         
+         
+//popup
+         
+//define popup for public land service
+const publicpopup = {
+  "title": "Public Land",
+  "content": "<b>Class:</b> {LCCode} <br>"
+}
+
+//define popup for public land service
+const privatepopup = {
+  "title": "Private Land",
+  "content": "<b>Class:</b> {LCCode} <br>"
+}
+
+
+//define popup for public land service
+const waterpopup = {
+  "title": "Water",
+  "content": "<b>Waterbody:</b> {gnis_name} <br>"
+}
+
+
+//define popup for public land service
+const trailpopup = {
+  "title": "Trail Name",
+  "content": "<b>Trail Name:</b> {NAME} <br>"
+}
+//end pupup
+
 
 
            
@@ -69,28 +102,38 @@ const pictures = new FeatureLayer({
     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer"
 });
 const trails = new FeatureLayer({
-    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Adirondack_Hiking_Trails/FeatureServer"
+    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Adirondack_Hiking_Trails/FeatureServer",
+    popupTemplate: trailpopup
 });
 
 const stateland = new FeatureLayer({
     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Map_3D2_WFL1/FeatureServer/0",
-    title: "Public Land"
+    title: "Public Land",
+   popupTemplate: publicpopup
+  
 });
          
 const privateland = new FeatureLayer({
     url:"https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Map_3D2_WFL1/FeatureServer/1",
-    title: "Private Land"
+    title: "Private Land",
+     popupTemplate: privatepopup 
 });
-
+         
+const water = new FeatureLayer({
+    url: "https://services6.arcgis.com/DZHaqZm9cxOD4CWM/arcgis/rest/services/Waterbody_Inventory_List/FeatureServer",
+    title: "Water", 
+});
+           
+         
 const hillshade = new TileLayer({
     url: "https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer",
     title: "Hillshade"
 });
 
            
-webscene.addMany([hillshade,privateland,stateland,trails,pictures]);
+webscene.addMany([hillshade,water,privateland,stateland,trails,pictures]);
 
-        
+
            
 const graphicsLayer = new GraphicsLayer();
     webscene.add(graphicsLayer);
@@ -291,7 +334,6 @@ let homeWidget = new Home({
 view.ui.add(homeWidget, "top-left");         
          
          
-           
 });
     </script>
   </head>

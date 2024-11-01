@@ -50,9 +50,10 @@
         "esri/layers/TileLayer",
         "esri/widgets/Home",
         "esri/widgets/Popup",
-         "esri/PopupTemplate"
+        "esri/PopupTemplate",
+        "esri/popup/content/AttachmentsContent"
          
-      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, TileLayer, Home, Popup, PopupTemplate) => {
+      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, TileLayer, Home, Popup, PopupTemplate,AttachmentsContent) => {
         const gpUrl =
           "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed";
         
@@ -64,7 +65,13 @@ const webscene = new WebScene({
         id: "8ac1abdfd6e04a93bb9406ff88cb4671"
     }
 });   
+
          
+         
+         
+let attachmentsElement = new AttachmentsContent({
+  displayType: "list" // this will show all attachments as a list of linked files
+})
          
 //popup
          
@@ -79,27 +86,24 @@ const privatepopup = {
   "title": "Private Land",
   "content": "<b>Class:</b> {LCCode} <br>"
 }
-
-
-//define popup for public land service
-const waterpopup = {
-  "title": "Water",
-  "content": "<b>Waterbody:</b> {gnis_name} <br>"
-}
-
-
 //define popup for public land service
 const trailpopup = {
   "title": "Trail Name",
   "content": "<b>Trail Name:</b> {NAME} <br>"
 }
+
+const picpopup = {
+  "title": "Picture Title",
+  "content": [attachmentsElement]
+}
+
+
+
 //end pupup
-
-
-
            
 const pictures = new FeatureLayer({
-    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer"
+    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer",
+    popupTemplate: picpopup
 });
 const trails = new FeatureLayer({
     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Adirondack_Hiking_Trails/FeatureServer",
@@ -121,7 +125,7 @@ const privateland = new FeatureLayer({
          
 const water = new FeatureLayer({
     url: "https://services6.arcgis.com/DZHaqZm9cxOD4CWM/arcgis/rest/services/Waterbody_Inventory_List/FeatureServer",
-    title: "Water", 
+    title: "Water"
 });
            
          
@@ -132,7 +136,6 @@ const hillshade = new TileLayer({
 
            
 webscene.addMany([hillshade,water,privateland,stateland,trails,pictures]);
-
 
            
 const graphicsLayer = new GraphicsLayer();
@@ -325,13 +328,35 @@ view.ui.add(editExpand, {
   position:"bottom-right",
 });
 
-//add home eidget
+//add home widget
 let homeWidget = new Home({
   view: view
 });
 
 // adds the home widget to the top left corner of the MapView
 view.ui.add(homeWidget, "top-left");         
+         
+
+         
+        
+view.on("pointer-move", function (event) { 
+     view.hitTest(event).then(function (response) { 
+       if (response.results.length) { 
+         var graphic = response.results.filter(function (result) { 
+           // check if the graphic belongs to the layer of interest 
+           return result.graphic.layer === privateland, stateland,pictures, trails;
+         })[0].graphic; 
+         view.popup.open({ 
+           location: graphic.geometry.centroid, 
+           features: [graphic] 
+         }); 
+       } else { 
+         view.popup.close(); 
+       } 
+     }); 
+   }); 
+       
+         
          
          
 });

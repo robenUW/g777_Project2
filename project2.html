@@ -51,18 +51,20 @@
         "esri/widgets/Home",
         "esri/widgets/Popup",
         "esri/PopupTemplate",
-        "esri/popup/content/AttachmentsContent"
+        "esri/popup/content/AttachmentsContent",
+         "esri/widgets/BasemapGallery"
          
-      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, TileLayer, Home, Popup, PopupTemplate,AttachmentsContent) => {
+      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, TileLayer, Home, Popup, PopupTemplate,AttachmentsContent, BasemapGallery) => {
         const gpUrl =
           "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed";
         
            
            
-esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFpK3FydkiYn30kI1t--umoFiC_Z51v9q5KDL4ETbNoK_Y07EXdvPQcYhknSJSmzWEoDlmQiBgNCpR8syKw7d0DaLlis406wi33x0lxsde_yrSbXKhk8hwOnQ6CF5oxlifktnhTP7ihSd4bCK1IJ3xeEKyn1a2PfSuM2DfVeyUj7F3wIppZY8mTS99s63B1KHWanX5Q6NU-OIUfYxJ-1WNql6Oas7VM11IqBOktjBw0Fl4.AT1_8pierIL4"   
+esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFpyXVX1wdNt7A0BdL2suFVY26ca5Q8c_Q4PrdHKvvYrFHQjyfJYVAWPJ1BELvLeNDpCkXimGyN6ZfKGQ4XcYfvYFW_SHrhBfE-XQ-ZBzzpJK-N9C3e7CrbZh9-0P1ZzPOzAAqloFut9GoAmoOoUW_ok2Zj8mp65GAZi7-ul2AzpBTaUA5Z-Ou03ca09WBZQnDsQxRy-W-3DD3y8jP7e6x_BZXOZauAO7PKjPxJHdrIqFMFqlimXgeDwCtbG1l1yZeZAT1_8pierIL4"   
 const webscene = new WebScene({
+    basemap: "terrain",
     portalItem: {
-        id: "8ac1abdfd6e04a93bb9406ff88cb4671"
+        id: "8ac1abdfd6e04a93bb9406ff88cb4671",
     }
 });   
 
@@ -164,6 +166,32 @@ const view = new SceneView({
      }
 
 }); 
+         
+         
+         
+let basemapGallery = new BasemapGallery({
+  view: view
+});
+
+//adds expand to the basemap widget
+const bgExpand = new Expand({
+          view: view,
+          content: basemapGallery,
+        });
+
+        // close the expand whenever a basemap is selected
+        basemapGallery.watch("activeBasemap", () => {
+          const mobileSize = view.heightBreakpoint === "xsmall" || view.widthBreakpoint === "xsmall";
+
+          if (mobileSize) {
+            bgExpand.collapse();
+          }
+        });
+
+        view.ui.add(bgExpand, "top-left");
+        
+         
+         
 
 const fillSymbol = {
   type: "simple-fill",

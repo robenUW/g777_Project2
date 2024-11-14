@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title> Finding a Pictureqsque Location - The Adirondack Park</title>
+    
+    <link rel="stylesheet" href="style/style.css">
+    <a href = "popupinfo.html" class="button ">Land Classification & Adding Pictures</a></li>
+  
+    <a href = "viewshed.html" class="button "> Viewshed </a></li>
+    
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        width:100%;
+        height:100%;
+        
+      }
+
+      #paneDiv {
+        position: absolute;
+        top: 85px;
+        right: 10px;
+        padding: 12px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        width: 200px;
+      }
+    </style>
+    
+    
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.30/"></script>
+
+    <script>
+       require([
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/GraphicsLayer",
+        "esri/Graphic",
+        "esri/geometry/Point",
+        "esri/rest/geoprocessor",
+        "esri/rest/support/LinearUnit",
+        "esri/rest/support/FeatureSet",
+        "esri/WebScene",
+        "esri/config",
+        "esri/widgets/Legend",
+        "esri/widgets/LayerList",
+        "esri/widgets/Expand",
+        "esri/widgets/Locate", 
+        "esri/widgets/Search",
+        "esri/widgets/Editor",
+        "esri/layers/FeatureLayer",
+        "esri/layers/TileLayer",
+        "esri/widgets/Home",
+        "esri/widgets/Popup",
+        "esri/PopupTemplate",
+        "esri/popup/content/AttachmentsContent",
+         "esri/widgets/BasemapGallery"
+         
+      ], (Map, SceneView, GraphicsLayer, Graphic, Point, geoprocessor, LinearUnit, FeatureSet, WebScene, esriConfig,Legend,LayerList, Expand, Locate, Search, Editor, FeatureLayer, TileLayer, Home, Popup, PopupTemplate,AttachmentsContent, BasemapGallery) => {
+        const gpUrl =
+          "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed";
+        
+           
+           
+esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurDGKNNgJm-887oxloif1wmWXCb-Nq_L7mCO9wrgI6eFpyXVX1wdNt7A0BdL2suFVY26ca5Q8c_Q4PrdHKvvYrFHQjyfJYVAWPJ1BELvLeNDpCkXimGyN6ZfKGQ4XcYfvYFW_SHrhBfE-XQ-ZBzzpJK-N9C3e7CrbZh9-0P1ZzPOzAAqloFut9GoAmoOoUW_ok2Zj8mp65GAZi7-ul2AzpBTaUA5Z-Ou03ca09WBZQnDsQxRy-W-3DD3y8jP7e6x_BZXOZauAO7PKjPxJHdrIqFMFqlimXgeDwCtbG1l1yZeZAT1_8pierIL4"   
+const webscene = new WebScene({
+    basemap: "terrain",
+    portalItem: {
+        id: "8ac1abdfd6e04a93bb9406ff88cb4671",
+    }
+});   
+
+         
+         
+         
+let attachmentsElement = new AttachmentsContent({
+  displayType: "list" // this will show all attachments as a list of linked files
+})
+         
+//popup
+         
+const picpopup = {
+  "title": "Picture Title",
+  "content": [attachmentsElement]
+}
+
+
+
+//end pupup
+           
+const pictures = new FeatureLayer({
+    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Picture_Locations/FeatureServer",
+    popupTemplate: picpopup
+});
+const trails = new FeatureLayer({
+    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Adirondack_Hiking_Trails/FeatureServer",
+});
+
+const stateland = new FeatureLayer({
+    url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Map_3D2_WFL1/FeatureServer/0",
+    title: "Public Land",
+  
+});
+         
+const privateland = new FeatureLayer({
+    url:"https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Map_3D2_WFL1/FeatureServer/1",
+    title: "Private Land"
+})
+         
+const water = new FeatureLayer({
+    url: "https://services6.arcgis.com/DZHaqZm9cxOD4CWM/arcgis/rest/services/Waterbody_Inventory_List/FeatureServer",
+    title: "Water"
+});
+           
+         
+const hillshade = new TileLayer({
+    url: "https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer",
+    title: "Hillshade"
+});
+
+           
+webscene.addMany([hillshade,water,privateland,stateland,trails,pictures]);
+
+           
+const graphicsLayer = new GraphicsLayer();
+    webscene.add(graphicsLayer);
+    graphicsLayer.title = "Viewshed";
+
+    const markerSymbol = {
+      type: "simple-marker",
+      color: [0, 0, 0],
+      outline: {
+        color: [255, 255, 255],
+        width: 2
+      }
+    };
+           
+const view = new SceneView({
+    container: "viewDiv",
+    map: webscene,
+   camera: {
+     position: {
+       x: -73.9799, //Longitude
+       y: 44.2795, //Latitude
+       z: 2000 //Meters
+      },
+     tilt: 75
+     }
+
+}); 
+         
+          
+         
+
+const fillSymbol = {
+  type: "simple-fill",
+  color: [0, 0, 0], 
+  outline: {
+    color: [255, 255, 255],
+    width: 1
+  }
+};
+
+const options = {
+  outSpatialReference: {
+    wkid: 102100
+  }
+};
+
+view.on("click", computeViewshed);
+
+function computeViewshed(event) {
+    graphicsLayer.removeAll();
+
+const point = new Point({
+    longitude: event.mapPoint.longitude,
+    latitude: event.mapPoint.latitude
+});
+
+const inputGraphic = new Graphic({
+    geometry: point,
+    symbol: markerSymbol
+});
+
+graphicsLayer.add(inputGraphic);
+
+const inputGraphicContainer = [];
+inputGraphicContainer.push(inputGraphic);
+const featureSet = new FeatureSet();
+featureSet.features = inputGraphicContainer;
+const vsDistance = new LinearUnit();
+vsDistance.distance = 5;
+vsDistance.units = "miles";
+
+const params = {
+    Input_Observation_Point: featureSet,
+    Viewshed_Distance: vsDistance
+};
+
+geoprocessor.execute(gpUrl, params, options).then(drawResultData);
+}
+
+function drawResultData(result) {
+  const resultFeatures = result.results[0].value.features;
+
+  // Assign each resulting graphic a symbol
+  const viewshedGraphics = resultFeatures.map((feature) => {
+    feature.symbol = fillSymbol;
+    return feature;
+  });
+
+  // Add the resulting graphics to the graphics layer
+  graphicsLayer.addMany(viewshedGraphics);
+  view.goTo({
+    target: viewshedGraphics,
+    tilt: 0
+  })
+  .catch((error) => {
+    if (error.name != "AbortError") {
+      console.error(error);
+    }
+  });
+}
+           
+const legend = new Legend({
+  view: view,
+    layerInfos: [{
+      layer: webscene,
+    }]
+});
+           
+         
+//add expand for legend 
+const lgExpand = new Expand({
+  view: view,
+  content: legend,
+  expandIcon: "legend",
+});
+
+// close the expand whenever a basemap is selected
+legend.watch("activeLegend", () => {
+  const mobileSize2 = view.heightBreakpoint === "xsmall" || view.widthBreakpoint === "xsmall";
+
+  if (mobileSize2) {
+    lgExpand.collapse();
+  }
+});
+ //adds legend to map
+view.ui.add(lgExpand, "bottom-right");
+         
+const layerList = new LayerList({
+  view: view,
+  dragEnabled: true
+});
+    
+    
+//adds expand feature to layer list
+const listexpand = new Expand({
+  view: view,
+  content: layerList,
+  icon: "map-contents"
+});
+         
+
+// add layer list with expand feature
+view.ui.add(listexpand, "bottom-right")  
+      
+         
+//add in locate user location function
+const locateBtn = new Locate({
+  view: view
+});
+
+// Add the locate widget to the top left corner of the view
+view.ui.add(locateBtn, {
+  position: "top-left"
+});    
+
+// add in search widget        
+const searchWidget = new Search({
+  view: view
+});
+// Adds the search widget below other elements in
+// the top left corner of the view
+view.ui.add(searchWidget, {
+  position: "bottom-right",
+  index: 2
+});
+                 
+
+    
+// Begin Editor constructor
+const editor = new Editor({
+ view: view,
+  }); // End Editor constructor
+
+//expands editor widget
+const editExpand = new Expand({
+  view: view,
+  content: editor,
+  expandIcon: "add-in-edit"
+});
+
+editor.watch("activeEditor", () => {
+  const mobileSize3 = view.heightBreakpoint === "xsmall" || view.widthBreakpoint === "xsmall";
+
+  if (mobileSize3) {
+    editExpand.collapse();
+  }
+});
+
+
+//add editor widget to map
+view.ui.add(editExpand, {
+  position:"bottom-right",
+});
+
+//add home widget
+let homeWidget = new Home({
+  view: view
+});
+
+// adds the home widget to the top left corner of the MapView
+view.ui.add(homeWidget, "top-left");         
+         
+         
+         
+});
+          
+      
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+    <div id="paneDiv" class="esri-widget">Click on map to execute ViewShed geoprocessor</div>
+  
+  </body>
+</html>

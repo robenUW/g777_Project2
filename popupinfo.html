@@ -137,7 +137,7 @@ const water = new FeatureLayer({
            
          
 const hillshade = new TileLayer({
-    url: "https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer",
+    url:"https://tiles.arcgis.com/tiles/HRPe58bUyBqyyiCt/arcgis/rest/services/Map_3D2_WTL1/MapServer",
     title: "Hillshade"
 });
 
@@ -292,9 +292,38 @@ view.on("pointer-move", function (event) {
       
       
     </script>
-  </head>
+  
 
   <body>
+    <div class="overlay-wrap">
+        <input type="checkbox" name="hide" id="hide">
+        <label class="hide" for="hide">X</label>
+        <div class="overlay2">
+                <div class="overlay">
+                        <div class="overlay-inner" >
+                          
+
+                        
+                          <div class="container2">
+                              <img src="img/falladk.jpg" alt="Snow" style="width:100% height:100%">
+                              
+                            <div class="top-left2"><h1> Land Classifications & Adding Pictures </h1>
+                                
+                              <p>On this page, you can scroll through land classifications in the Adirondack Park
+    
+                                <div></div>
+                                You can also edit the pictures Layer to add your own pictures, and write where they were taken!</p>
+                    
+                           
+                          </div>
+                                  </p>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>
+
+    
     <div id="viewDiv"></div>
   
   </body>

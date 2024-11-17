@@ -212,3 +212,82 @@ color:white;
  80%{opacity:1;top:10px;}
  100%{opacity:1;top:10px;}
 }
+
+
+/* Background for splash page*/
+
+
+/* Container holding the image and the text */
+.container {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+
+
+/* Top left text */
+.top-left {
+  position: absolute;
+  top: 1px;
+  left: 10%;
+  font-size: medium;
+}
+
+
+/* Centered text */
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+
+/* Container holding the image and the text */
+.container2 {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+/* Top left text */
+.top-left2 {
+  position: absolute;
+  top: 1px;
+  left: 30%;
+  font-size: medium;
+}
+
+
+/* Centered text */
+.centered2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+/* Container holding the image and the text */
+.container3 {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+/* Top left text */
+.top-left3 {
+  position: absolute;
+  top: 1px;
+  left: 35%;
+  font-size: medium;
+}
+
+
+/* Centered text */
+.centered3 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

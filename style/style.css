@@ -91,7 +91,7 @@ html,body{
     -ms-animation: splash 10s forwards; 
     animation: splash 10s forwards;
     overflow-x: scroll;
-    overflow-x:scroll;
+    overflow-y: scroll;
 }
 .overlay-inner {
     display:table-cell;

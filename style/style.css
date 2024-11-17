@@ -74,7 +74,8 @@ body {
 html,body{
     height:100%;
     margin:0;
-    padding:0;  
+    padding:0;
+    
 }
 .overlay {
     opacity:0;
@@ -86,9 +87,11 @@ html,body{
     display:table;
     background:rgba(0,0,0,0.8);
     -webkit-animation: splash 10s forwards;
-  -moz-animation: splash 10s forwards; 
-  -ms-animation: splash 10s forwards; 
-  animation: splash 10s forwards;
+    -moz-animation: splash 10s forwards; 
+    -ms-animation: splash 10s forwards; 
+    animation: splash 10s forwards;
+    overflow-x: scroll;
+    overflow-x:scroll;
 }
 .overlay-inner {
     display:table-cell;
